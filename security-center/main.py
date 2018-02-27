@@ -3,6 +3,7 @@ import sys
 import argparse
 from pathlib import Path
 from App import app, __VERSION__
+from model import db
 import yaml
 
 def _load_conf(path):
@@ -50,6 +51,7 @@ def _parser_args(params):
 
 def _run_app():
     """执行启动服务的操作."""
+    db.initialize()
     if app.config.WORKERS <=1:
         app.config.WORKERS = 1
     app.run(
