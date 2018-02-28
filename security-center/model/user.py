@@ -1,10 +1,8 @@
 """定义user."""
 import hmac
-from peewee import (
-    CharField,
-    DateTimeField,
-    UUIDField
-)
+from uuid import uuid4
+from datetime import datetime
+
 from playhouse.postgres_ext import (
     JSONField,
     BinaryJSONField
@@ -26,14 +24,32 @@ class User(BaseModel):
     """
 
     uid = UUIDField(primary_key=True)
-    nickname = CharField(unique=True)
+    ctime = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+    utime = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+
+    nickname = CharField(unique=True, index=True)
+    cnickname_time = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+
     password = CharField()
+    cpassword_time = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+
     email = CharField()
-    ctime = DateTimeField()
-    info = BinaryJSONField()
+    cemail_time = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+
+    info = BinaryJSONField(null=False)
+    cinfo_time = DateTimeField(null=False)
+    access authority = BinaryJSONField()
+    caccess authority_time = DateTimeField(formats='%Y-%m-%d %H:%M:%S.%f')
+    history = BinaryJSONField(default=User.history_default)
 
     @classmethod
-    def hash_password(cls,org_pwd: str):
+    def history_default():
+        return {
+            
+        }
+
+    @classmethod
+    def hash_password(cls, org_pwd: str):
         """原始密码计算hash值.
 
         使用hmac计算hash值,salt被设置在`datebase`对象的`salt`字段上.
@@ -49,6 +65,24 @@ class User(BaseModel):
         org_pwd = org_pwd.encode("utf-8")
         hash_pwd = hmac.new(salt, org_pwd)
         return hash_pwd.hexdigest()
+
+    @classmethod
+    async def create_user(cls, *, nickname, password, email, access_authority):
+        now = datetime.now()
+        uid = str(uuid4())
+        await cls.create(
+            uid=uid,
+            ctime=now,
+            utime=now,
+            nickname=nickname,
+            cnickname_time=now,
+            password=password,
+            cpassword_time=now,
+            email=email,
+            cemail_time=now,
+            access_authority=access_authority,
+            caccess_authority_time=now
+        )
 
     @classmethod
     async def current_user(cls, session):
@@ -72,7 +106,7 @@ class User(BaseModel):
             org_pwd (str): - 输入的密码
 
         Returns:
-            [bool]: - 是否输入的密码的hash值和保存的密码hash值一致
+            (bool): - 是否输入的密码的hash值和保存的密码hash值一致
 
         """
         hash_pwd = User.hash_password(org_pwd)
@@ -80,3 +114,27 @@ class User(BaseModel):
             return True
         else:
             return False
+
+    async def change_password(self, new_password: str)->None:
+        """更新用户密码.
+
+        Args:
+            new_password (str): -用于更新的密码
+        """
+        hashed_new_password = self.__class__.hash_password(new_password)
+        history = dict(self.history)
+        password_history = history.get("password")
+        if password_history:
+            password_history.append({
+                self.password
+            })
+        else:
+            password_history
+        history.update({
+            "password": password_history
+        })
+        self.password = hashed_new_password
+
+        await self.save()
+
+    async def get_history_password(self):

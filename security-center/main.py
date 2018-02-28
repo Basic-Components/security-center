@@ -2,6 +2,7 @@
 import sys
 import argparse
 from pathlib import Path
+from aioorm.utils import AioDbFactory
 from App import app, __VERSION__
 from model import db
 import yaml
@@ -49,6 +50,11 @@ def _parser_args(params):
     args = parser.parse_args(params)
     return args
 
+def _init_db():
+    """初始化数据库连接."""
+    database = AioDbFactory(app.config.DB_URL)
+    db.initialize(database)
+
 def _run_app():
     """执行启动服务的操作."""
     db.initialize()
@@ -85,6 +91,7 @@ def main(argv=sys.argv[1:]):
         app.config.update(result)
     result = _make_conf(args)
     app.config.update(result)
+    _init_db()
     _run_app()
 
 if __name__ == '__main__':
