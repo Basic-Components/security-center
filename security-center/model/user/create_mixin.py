@@ -17,10 +17,10 @@ class CreateMixin:
                 }
             ]
             await cls.create(
-                nickname=nickname,
-                password=password,
-                email=email,
-                access_authority=access_authority
+                _nickname=nickname,
+                _password=password,
+                _email=email,
+                _access_authority=access_authority
             )
         else:
             await cls.create(

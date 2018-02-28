@@ -30,7 +30,7 @@ class HashPasswordMixin:
 
         """
         hash_pwd = User.hash_password(org_pwd)
-        if self.password == hash_pwd:
+        if self._password == hash_pwd:
             return True
         else:
             return False
@@ -38,21 +38,32 @@ class HashPasswordMixin:
     async def change_password(self, new_password: str)->None:
         """更新用户密码.
 
+        需要使用到core中的`_change_attr`
+
         Args:
             new_password (str): -用于更新的密码
         """
         hashed_new_password = self.__class__.hash_password(new_password)
-        history = dict(self.history)
-        password_history = history.get("password")
-        if password_history:
-            password_history.append({
-                self.password
-            })
-        else:
-            password_history
-        history.update({
-            "password": password_history
-        })
-        self.password = hashed_new_password
-
-        await self.save()
+        await self._change_attr("password",hashed_new_password):
+        # now = datetime.now()
+        # now_str = now.strftime(self.__class__.DATETIME_FMT)
+        
+        # history = dict(self.history)
+        # password_history = history.get("password")
+        # pw = {
+        #         "value":self._password,
+        #         "ctime":self._cpassword_time.strftime(self.__class__.DATETIME_FMT),
+        #         "dtime":now_str
+        #     }
+        # if password_history:
+        #     password_history.append(pw)
+        # else:
+        #     password_history=[pw]
+        # history.update({
+        #     "password": password_history
+        # })
+        # self._password = hashed_new_password
+        # self._cpassword_time = now
+        # self.history = history
+        # self.utime = now
+        # await self.save()
