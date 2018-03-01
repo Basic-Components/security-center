@@ -1,3 +1,5 @@
+import hmac
+
 
 class HashPasswordMixin:
     @classmethod
@@ -13,11 +15,14 @@ class HashPasswordMixin:
             (str): 原始密码计算hash值的16进制表示.
 
         """
-        salt = cls.Meta.database.salt.encode("utf-8")
+        salt = cls._meta.database.salt.encode("utf-8")
         org_pwd = org_pwd.encode("utf-8")
-        hash_pwd = hmac.new(salt, org_pwd)
+        hash_pwd = hmac.new(salt, org_pwd,digestmod="md5")
         return hash_pwd.hexdigest()
 
+    @property
+    def cpassword_time(self):
+        return self._time_to_str('password')
 
     def check_password(self, org_pwd):
         """判断用户密码是否正确.
@@ -29,13 +34,13 @@ class HashPasswordMixin:
             (bool): - 是否输入的密码的hash值和保存的密码hash值一致
 
         """
-        hash_pwd = User.hash_password(org_pwd)
-        if self._password == hash_pwd:
+        hash_pwd = self.__class__.hash_password(org_pwd)
+        if hmac.compare_digest(self._password,hash_pwd):
             return True
         else:
             return False
 
-    async def change_password(self, new_password: str)->None:
+    async def set_password(self, new_password: str)->None:
         """更新用户密码.
 
         需要使用到core中的`_change_attr`

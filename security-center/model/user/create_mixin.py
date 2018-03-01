@@ -20,14 +20,14 @@ class CreateMixin:
             ]
             await cls.create(
                 _nickname=nickname,
-                _password=password,
+                _password=cls.hash_password(password),
                 _email=email,
-                _access_authority=access_authority
+                access_authority=access_authority
             )
         else:
             await cls.create(
                 _nickname=nickname,
-                _password=password,
+                _password=cls.hash_password(password),
                 _email=email
             )
             
