@@ -44,7 +44,7 @@ class HashPasswordMixin:
             new_password (str): -用于更新的密码
         """
         hashed_new_password = self.__class__.hash_password(new_password)
-        await self._change_attr("password",hashed_new_password):
+        await self._change_attr("password",hashed_new_password)
         # now = datetime.now()
         # now_str = now.strftime(self.__class__.DATETIME_FMT)
         

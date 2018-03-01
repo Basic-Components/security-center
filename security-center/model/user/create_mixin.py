@@ -1,10 +1,12 @@
+from datetime import datetime
+
 class CreateMixin:
 
     @classmethod
     async def create_user(cls, *, nickname, password, email, access_authority=None):
         #
         #uid = str(uuid4())
-        now_str = datetime.now().strftime(DATETIME_FMT)
+        now_str = datetime.now().strftime(cls.DATETIME_FMT)
         if access_authority:
             access_authority = [
                 {
@@ -24,8 +26,8 @@ class CreateMixin:
             )
         else:
             await cls.create(
-                nickname=nickname,
-                password=password,
-                email=email
+                _nickname=nickname,
+                _password=password,
+                _email=email
             )
             
