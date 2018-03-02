@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from uuid import uuid4
 from model.base import BaseModel
 from peewee import (
@@ -7,6 +8,8 @@ from peewee import (
     UUIDField,
     BooleanField,
     IntegerField,
+    # BlobField
+    TextField
 )
 from playhouse.postgres_ext import (
     BinaryJSONField
@@ -17,6 +20,17 @@ DATETIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
 
 def info_default():
     """默认的用户个人信息字段"""
+    return {
+        'URL': None,  # 自己的博客站
+        "bio": None,  # 简单描述(200字内)
+        "company": None,  # 企业名
+        'nation': None,  # 设置的所在国家
+        'city': None,  # 设置的所在城市
+    }
+
+
+def realinfo_default():
+    """默认的用户个人真实信息字段"""
     return {
         'realname': None,  # 真实姓名
         "id_card": None,  # 身份证号
@@ -55,14 +69,20 @@ def access_authority_default():
     }]
 
 
+
+
+
 class Core(BaseModel):
 
     STATUS_CHOICES = ((0, "未认证"), (1, "已认证"), (2, "已注销"))
+    ROLE_CHOICES = ((0, "超级用户"), (1, "管理员用户"), (2, "普通用户"))
     DATETIME_FMT = DATETIME_FMT
     # 主键的uid
     uid = UUIDField(primary_key=True, default=uuid4)
     # 账户状态,
     _status = IntegerField(default=0, choices=STATUS_CHOICES)
+    # 账户权限
+    _role = IntegerField(default=2, choices=STATUS_CHOICES)
     # 认证时间
     _auth_time = DateTimeField(formats=DATETIME_FMT, null=True)
     # 注销时间
@@ -87,6 +107,10 @@ class Core(BaseModel):
     # 用户当前邮箱写入时间
     _email_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
+    # 用户头像
+    _img_type = CharField(null=True)
+    _img_base64 = TextField(null=True)
+
     # 用户手机号
     _phone = CharField(null=True)
     # 用户当前写入手机号时间
@@ -99,9 +123,11 @@ class Core(BaseModel):
     _social_accounts = BinaryJSONField(null=True)
 
     # 用户是否通过实名认证
-    real_name_auth = BooleanField(default=False)
+    _real_name_auth = BooleanField(default=False)
     # 用户实名认证通过的日期
     _real_name_auth_time = DateTimeField(formats=DATETIME_FMT, null=True)
+    # 用户真实信息
+    _realinfo = BinaryJSONField(default=realinfo_default)
 
     # 用于的第三方登录账号
     _thirdpart_auth = BinaryJSONField(null=True)
@@ -116,9 +142,6 @@ class Core(BaseModel):
     _changed_history = BinaryJSONField(default=changed_history_default)
     # 用户登录历史记录
     _login_history = BinaryJSONField(null=True)
-
-    def __unicode__(self):
-        return dict(self.STATUS_CHOICES)[self._status]
 
     async def _change_attr(self, attr_name, new_value):
         value = getattr(self, "_" + attr_name)
@@ -140,7 +163,7 @@ class Core(BaseModel):
                 attr_name: attr_history
             })
             self._changed_history = history
-        setattr(self, "_c" + attr_name + "_time", now)
+        setattr(self, "_" + attr_name + "_time", now)
         setattr(self, "_" + attr_name, new_value)
         self._update_time = now
         await self.save()
@@ -157,21 +180,33 @@ class Core(BaseModel):
     def status(self):
         return dict(self.STATUS_CHOICES)[self._status]
 
-    @status.setter
-    async def status(self, value: str):
+    async def set_status(self, value: str):
         now = datetime.now()
         real_value = {v: i for i, v in self.STATUS_CHOICES}.get(value)
-        if real_value:
+        if real_value is not None:
             self._status = real_value
-            self.utime = now
+            self._update_time = now
             now = datetime.now()
             if real_value == 1:
-                self.auth_time = now
+                self._auth_time = now
             elif real_value == 2:
-                self.close_time = now
+                self._close_time = now
             await self.save()
         else:
             raise ValueError("Illegal status")
+
+    @property
+    def role(self):
+        return dict(self.ROLE_CHOICES)[self._role]
+
+    async def set_role(self, value: str):
+        now = datetime.now()
+        real_value = {v: i for i, v in self.ROLE_CHOICES}.get(value)
+        if real_value is not None:
+            self._role = real_value
+            await self.save()
+        else:
+            raise ValueError("Illegal role")
 
     @property
     def auth_time(self):
@@ -193,8 +228,7 @@ class Core(BaseModel):
     def nickname(self):
         return self._nickname
 
-    @nickname.setter
-    async def nickname(self, newname):
+    async def set_nickname(self, newname):
         await self._change_attr("nickname", newname)
 
     @property
@@ -205,8 +239,7 @@ class Core(BaseModel):
     def email(self):
         return self._email
 
-    @email.setter
-    async def email(self, newemail):
+    async def set_email(self, newemail):
         await self._change_attr("email", newemail)
 
     @property
@@ -217,8 +250,7 @@ class Core(BaseModel):
     def phone(self):
         return self._phone
 
-    @phone.setter
-    async def phone(self, newemail):
+    async def set_phone(self, newphone):
         await self._change_attr("phone", newphone)
 
     @property
@@ -229,9 +261,17 @@ class Core(BaseModel):
     def info(self):
         return self._info
 
-    @info.setter
-    async def info(self, new_value):
-        self._info = new_value
+    async def set_info(self, **kwargs):
+        info = self.info
+        info.update(kwargs)
+        data = {
+            'URL': info.get('URL'),
+            "bio": info.get('bio'),
+            "company": info.get('company'),
+            'nation': info.get('nation'),
+            'city': info.get('city'),
+        }
+        self._info = data
         self._update_time = datetime.now()
         await self.save()
 
@@ -239,11 +279,24 @@ class Core(BaseModel):
     def social_accounts(self):
         return self._social_accounts
 
-    @social_accounts.setter
-    async def social_accounts(self, new_value):
+    async def set_social_accounts(self, new_value):
         self._social_accounts = new_value
         self._update_time = datetime.now()
         await self.save()
+
+    @property
+    def real_name_auth(self):
+        return self._real_name_auth
+
+    async def set_real_name_authed(self):
+        if self._real_name_auth is True:
+            raise ValueError("already real name auth")
+        else:
+            now = datetime.now()
+            self._real_name_auth = True
+            self._real_name_auth_time = now
+            self._update_time = now
+            self.save()
 
     @property
     def real_name_auth_time(self):
@@ -253,8 +306,7 @@ class Core(BaseModel):
     def thirdpart_auth(self):
         return self._thirdpart_auth
 
-    @thirdpart_auth.setter
-    async def thirdpart_auth(self, new_value):
+    async def set_thirdpart_auth(self, new_value):
         self._thirdpart_auth = new_value
         self._update_time = datetime.now()
         await self.save()
@@ -263,8 +315,7 @@ class Core(BaseModel):
     def login_info(self):
         return self._login_info
 
-    @login_info.setter
-    async def login_info(self, *, ip, device, platform, city):
+    async def set_login_info(self, *, ip, device, platform, city):
         old_info = dict(self._login_info)
         now_str = datetime.now().strftime(self.DATETIME_FMT)
         self._login_info = {
@@ -314,26 +365,3 @@ class Core(BaseModel):
     @property
     def login_history(self):
         return self._login_history
-
-    def to_dict(self):
-        return dict(
-            uid=self.uid,
-            status=self.status,
-            auth_time=self.auth_time,
-            close_time=self.close_time,
-            ctime=self.ctime,
-            utime=self.utime,
-            nickname=self.nickname,
-            cnickname_time=self.cnickname_time,
-            cpassword_time=self.cpassword_time,
-            email=self.email,
-            cemail_time=self.cemail_time,
-            phone=self.phone,
-            cphone_time=self.cphone_time,
-            real_name_auth=self.real_name_auth,
-            real_name_auth_time=self._real_name_auth_time,
-            access_authority=self.access_authority
-        )
-
-    # 用户的登录信息
-    #login_info = BinaryJSONField(default=login_info_default)

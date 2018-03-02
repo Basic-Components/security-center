@@ -1,23 +1,14 @@
-import coverage
-import unittest
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).absolute().parent.parent.joinpath("security-center")))
-from .test_model import ModelTest
-#coverage.process_startup()
+"""单元测试."""
+from colorama import colorama_text, Fore
+
 
 def setUpModule():
-    print("setUp test")
+    with colorama_text():
+        print(Fore.GREEN + 'text is green')
+        print(Fore.RESET + 'text is back to normal')
+        print('back to normal now')
+    print("setUp unit test")
 
 
 def tearDownModule():
-    print("tearUp test")
-
-
-if __name__ == '__main__':
-    cov = coverage.Coverage(cover_pylib="model")
-    cov.start()
-    unittest.main()
-    cov.stop()
-    cov.save()
-    cov.html_report()
+    print("tearUp unit test")
