@@ -6,9 +6,12 @@ sys.path.append(str(Path(__file__).absolute().parent.parent.joinpath("security-c
 from model import db, User
 from aioorm.utils import AioDbFactory
 import unittest
+from unittest import mock
 
 
 class ModelTest(unittest.TestCase):
+
+    # 初始化数据库和连接
     @classmethod
     def setUpClass(cls):
         # uri = "postgresql://postgres:rstrst@localhost:5432/test"#单位windows
@@ -28,6 +31,8 @@ class ModelTest(unittest.TestCase):
         print("tearDownClass")
         cls.loop.close()
 
+    # 创建和删除表
+
     async def _create_table(self):
         await self.db.connect(self.loop)
         await self.db.create_tables([User], safe=True)
@@ -36,6 +41,8 @@ class ModelTest(unittest.TestCase):
         await db.drop_tables([User], safe=True)
         await db.close()
 
+    # 测试表创建
+
     async def _test_user_table_create(self):
         await self._create_table()
         assert await User.table_exists() is True
@@ -43,6 +50,8 @@ class ModelTest(unittest.TestCase):
 
     def test_user_table_create(self):
         self.loop.run_until_complete(self._test_user_table_create())
+
+    # 测试创建表中一行数据
 
     async def _test_user_create_single(self):
         await self._create_table()
@@ -64,14 +73,13 @@ class ModelTest(unittest.TestCase):
     def test_user_create_single(self):
         self.loop.run_until_complete(self._test_user_create_single())
 
-
     async def _test_user_create_app(self):
         await self._create_table()
         await User.create_user(
             nickname=self.nickname,
             password=self.password,
             email=self.email,
-            access_authority = "newapp"
+            access_authority="newapp"
         )
         user = await User.get(User._nickname == self.nickname)
         assert user.nickname == self.nickname
@@ -85,6 +93,8 @@ class ModelTest(unittest.TestCase):
 
     def test_user_create_app(self):
         self.loop.run_until_complete(self._test_user_create_app())
+
+    # 测试修改密码
 
     async def _test_user_set_password(self):
         await self._create_table()
@@ -103,11 +113,32 @@ class ModelTest(unittest.TestCase):
     def test_user_change_password(self):
         self.loop.run_until_complete(self._test_user_set_password())
 
+    # 测试从session中获取当前的用户
+
+    async def _test_current_user(self):
+        await self._create_table()
+        await User.create_user(
+            nickname=self.nickname,
+            password=self.password,
+            email=self.email
+        )
+        _user = await User.get(User._nickname == self.nickname)
+        print(type(_user.uid))
+        print(_user.uid)
+        sessionmock = {"uid":_user.uid}
+        user = await User.current_user(sessionmock)
+        assert _user == user
+        await self._drop_table()
+
+    def test_current_user(self):
+        self.loop.run_until_complete(self._test_current_user())
+
+
 
 def add_suite():
     suite = unittest.TestSuite()
-    suite.addTest(TestAdd("test_user_table_create"))
-    # suite.addTest(TestAdd("test_user_create_single"))
+    suite.addTest(ModelTest("test_user_table_create"))
+    suite.addTest(ModelTest("test_user_create_single"))
     return suite
 
 

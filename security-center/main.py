@@ -7,11 +7,13 @@ from App import app, __VERSION__
 from model import db
 import yaml
 
+
 def _load_conf(path):
     """指定地址加载配置文件为配置字典."""
     with open(path) as f:
         result = yaml.load(f)
     return result
+
 
 def _make_conf(args):
     """通过命令行参数创建配置字典."""
@@ -20,18 +22,19 @@ def _make_conf(args):
         result["PORT"] = args.port
     if args.host:
         result['HOST'] = args.host
-    if args.debug:
-        result['DEBUG'] = args.debug
+    if args.nodebug:
+        result['DEBUG'] = False
     if args.workers:
         result['WORKERS'] = args.workers
-    if args.access_log:
-        result['ACCESS_LOG'] = args.access_log
+    if args.noaccess_log:
+        result['ACCESS_LOG'] = False
     if args.ssl_cert and args.ssl_key:
-        result["SSL"]={
-            'cert':args.ssl_cert,
-            'key':args.ssl_key
+        result["SSL"] = {
+            'cert': args.ssl_cert,
+            'key': args.ssl_key
         }
     return result
+
 
 def _parser_args(params):
     """解析命令行参数."""
@@ -39,8 +42,8 @@ def _parser_args(params):
     parser.add_argument("--port", type=int, help="指定端口")
     parser.add_argument("--host", type=str, help="指定主机")
     parser.add_argument("--workers", type=int, help="启动多少个进程执行")
-    parser.add_argument("--debug", type=bool, help="是否使用debug模式")
-    parser.add_argument("--access_log", type=bool, help="是否输出access_log")
+    parser.add_argument("--nodebug", action="store_true", help="是否使用debug模式")
+    parser.add_argument("--noaccess_log", action="store_true", help="是否输出access_log")
     parser.add_argument("--ssl_cert", type=str, help="指定ssl证书")
     parser.add_argument("--ssl_key", type=str, help="指定ssl密钥")
 
@@ -50,20 +53,23 @@ def _parser_args(params):
     args = parser.parse_args(params)
     return args
 
+
 def _init_db():
     """初始化数据库连接."""
     database = AioDbFactory(app.config.DB_URL)
+    database.salt = app.config.SECRET_KEY
     db.initialize(database)
+
 
 def _run_app():
     """执行启动服务的操作."""
     db.initialize()
-    if app.config.WORKERS <=1:
+    if app.config.WORKERS <= 1:
         app.config.WORKERS = 1
     app.run(
         host=app.config.HOST,
         port=app.config.PORT,
-        workers = app.config.WORKERS,
+        workers=app.config.WORKERS,
         debug=app.config.DEBUG,
         access_log=app.config.ACCESS_LOG,
         ssl=app.config.SSL
@@ -72,7 +78,7 @@ def _run_app():
 
 def main(argv=sys.argv[1:]):
     """服务启动入口.
-    
+
     设置覆盖顺序`命令行参数`>`'-c'指定的配置文件`>`项目启动位置的配置文件`>默认配置.
     """
     args = _parser_args(argv)
@@ -94,8 +100,6 @@ def main(argv=sys.argv[1:]):
     _init_db()
     _run_app()
 
+
 if __name__ == '__main__':
     main()
-
-
-

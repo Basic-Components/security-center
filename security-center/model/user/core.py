@@ -293,8 +293,8 @@ class Core(BaseModel):
         for att, value in old_info.items():
             if value in old_history["statistics"][att]:
                 result["statistics"][att] = {
-                    "count":old_history["statistics"][att]["count"]+1,
-                    "first_time":old_history["statistics"][att]["first_time"],
+                    "count": old_history["statistics"][att]["count"] + 1,
+                    "first_time": old_history["statistics"][att]["first_time"],
                     "last_time": old_info['time']
                 }
             else:
