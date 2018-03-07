@@ -1,7 +1,6 @@
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
-from model.base import BaseModel
 from peewee import (
     CharField,
     DateTimeField,
@@ -14,6 +13,7 @@ from peewee import (
 from playhouse.postgres_ext import (
     BinaryJSONField
 )
+from App.model.base import BaseModel
 
 DATETIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
 

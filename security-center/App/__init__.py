@@ -2,7 +2,7 @@
 from sanic import Sanic
 from sanic import response
 from sanic.response import json
-from App.api import api
+#from App.api import api
 #from App.view import view
 
 __VERSION__ = '0.0.5'
@@ -20,4 +20,4 @@ default_settings = {
 }
 app.config.update(default_settings)
 
-app.blueprint(api, url_prefix='/api')
+#app.blueprint(api, url_prefix='/api')

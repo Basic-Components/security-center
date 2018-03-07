@@ -1,4 +1,3 @@
-from colorama import colorama_text, Fore
 
 def setUpModule():
     print("setUp model test")
@@ -6,4 +5,3 @@ def setUpModule():
 
 def tearDownModule():
     print("tearDown model test")
-

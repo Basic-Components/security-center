@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 from aioorm.utils import AioDbFactory
 from App import app, __VERSION__
-from model import db
+from App.model import db
 import yaml
 
 

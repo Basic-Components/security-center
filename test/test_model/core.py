@@ -19,7 +19,7 @@ path = str(
 if path not in sys.path:
     sys.path.append(path)
 from testconfig import DBURI
-from model import db, User
+from App.model import db, User
 
 
 class Core(unittest.TestCase):

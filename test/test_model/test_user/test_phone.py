@@ -11,7 +11,7 @@ path = str(
 if path not in sys.path:
     sys.path.append(path)
 
-from model import User
+from App.model import User
 try:
     from test.test_model.core import Core
 except:

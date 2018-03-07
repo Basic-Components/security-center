@@ -1,5 +1,4 @@
 """单元测试."""
-from colorama import colorama_text, Fore
 
 
 def setUpModule():
