@@ -6,9 +6,9 @@ security-center
 
 * status: dev
 
-* author: 87
+* author: hsz
 
-* email: 
+* email: hsz1273327@gmail.com
 
 Desc
 --------------------------------
@@ -16,7 +16,7 @@ Desc
 simple tools
 
 
-keywords:tools
+keywords:web,app
 
 
 Feature
@@ -40,7 +40,7 @@ Install
 Documentation
 --------------------------------
 
-`Documentation on Readthedocs <>`_.
+`Documentation on Readthedocs <https://github.com/Basic-Components/security-center>`_.
 
 
 

@@ -1,0 +1,23 @@
+{
+    "meta": {
+        "project_name": "security_center",
+        "license": "MIT",
+        "version": "0.0.1",
+        "status": "dev",
+        "url": "https://github.com/Basic-Components/security-center"
+    },
+    "author": {
+        "author": "hsz",
+        "author_email": "hsz1273327@gmail.com"
+    },
+    "desc": {
+        "keywords": ["web", "app"],
+        "description": "simple tools"
+    },
+    "form": {
+        "env": "env",
+        "compiler": "python",
+        "project_form": "sanic",
+        "template": "blueprints"
+    }
+}

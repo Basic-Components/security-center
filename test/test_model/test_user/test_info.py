@@ -1,16 +1,15 @@
 import sys
-from datetime import datetime
 import unittest
 from pathlib import Path
-path = str(
-    Path(__file__).absolute().parent.parent.parent.parent.joinpath(
-        "security-center"
+try:
+    from security_center.model import User
+except:
+    path = str(
+        Path(__file__).absolute().parent.parent.parent.parent
     )
-)
-if path not in sys.path:
-    sys.path.append(path)
-
-from App.model import User
+    if path not in sys.path:
+        sys.path.append(path)
+    from security_center.model import User
 try:
     from test.test_model.core import Core
 except:

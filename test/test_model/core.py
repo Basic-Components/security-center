@@ -1,32 +1,26 @@
-import sys
 import asyncio
 import unittest
-from unittest import mock
-from pathlib import Path
 from aioorm.utils import AioDbFactory
-
-path = str(
-    Path(__file__).absolute().parent.parent.parent.joinpath(
-        "security-center"
+try:
+    from security_center import app
+    from security_center.model import db, User
+except:
+    import sys
+    from pathlib import Path
+    path = str(
+        Path(__file__).absolute().parent.parent.parent
     )
-)
-if path not in sys.path:
-    sys.path.append(path)
-
-path = str(
-    Path(__file__).absolute().parent.parent.parent
-)
-if path not in sys.path:
-    sys.path.append(path)
-from testconfig import DBURI
-from App.model import db, User
+    if path not in sys.path:
+        sys.path.append(path)
+    from security_center import app
+    from security_center.model import db, User
 
 
 class Core(unittest.TestCase):
     # 初始化数据库和连接
     @classmethod
     def setUpClass(cls):
-        database = AioDbFactory(DBURI)
+        database = AioDbFactory(app.config.TEST_DB_URL)
         database.salt = "qwe"
         cls.nickname = 'huangsizhe'
         cls.password = '12345'
