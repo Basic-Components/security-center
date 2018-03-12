@@ -5,3 +5,4 @@ pyyaml
 sanic_jinja2
 sanic_session
 aioorm
+requests_html

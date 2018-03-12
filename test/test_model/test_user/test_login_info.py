@@ -60,7 +60,6 @@ class LoginInfoTest(Core):
             assert user.login_info.get("device") == 'pc'
             assert user.login_info.get("platform") == 'windows'
             assert user.login_info.get("city") == '广东省深圳市'
-
         except:
             raise
         finally:

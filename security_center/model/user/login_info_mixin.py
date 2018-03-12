@@ -1,5 +1,7 @@
 from datetime import datetime
 import async_timeout
+import aiohttp
+from requests_html import HTML
 
 
 async def _get_city(ip):
@@ -30,7 +32,7 @@ class LoginInfoMixin:
         old_info = dict(self._login_info)
         now_str = datetime.now().strftime(self.DATETIME_FMT)
         try:
-            city = _get_city(ip)
+            city = await _get_city(ip)
         except:
             city = None
         self._login_info = {
@@ -40,6 +42,10 @@ class LoginInfoMixin:
             'city': city,  # ip地址指定的城市
             'time': now_str
         }
+        if old_info['ip'] is None:
+            await self.save()
+            return
+
         if self._login_history:
             old_history = dict(self._login_history)
         else:
@@ -55,11 +61,11 @@ class LoginInfoMixin:
 
         print("########")
         print(old_info)
+
         result = {
             "last": old_info,
             "statistics": {}
         }
-        if old_info["last"] is None and old_info["statistics"]['ip'] is None
         for att, value in old_info.items():
             if old_history["statistics"][att] is None:
                 result["statistics"][att] = {
