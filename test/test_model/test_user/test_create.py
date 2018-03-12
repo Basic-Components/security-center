@@ -81,12 +81,50 @@ class CreateTest(Core):
     def test_user_create_app(self):
         self.loop.run_until_complete(self._test_user_create_app())
 
+    async def _test_user_create_with_role(self):
+        """测试如果是其他应用调用接口,带着登录应用名时创建用户."""
+        await self._create_table()
+        await User.create_user(
+            nickname=self.nickname,
+            password=self.password,
+            email=self.email,
+            role="超级用户"
+        )
+        user = await User.get(User._nickname == self.nickname)
+        assert user.nickname == self.nickname
+        assert user.check_password(self.password)
+        assert user.email == self.email
+        assert user._role == 0
+        assert user.role == "超级用户"
+        await self._drop_table()
+
+    def test_user_create_with_role(self):
+        self.loop.run_until_complete(self._test_user_create_with_role())
+
+    async def _test_user_create_with_role_error(self):
+        """测试如果是其他应用调用接口,带着登录应用名时创建用户."""
+        await self._create_table()
+
+        with self.assertRaisesRegex(ValueError, r"unknown role"):
+            await User.create_user(
+                nickname=self.nickname,
+                password=self.password,
+                email=self.email,
+                role="未知用户"
+            )       
+        await self._drop_table()
+
+    def test_user_create_with_role_error(self):
+        self.loop.run_until_complete(self._test_user_create_with_role_error())
+
 
 def create_suite():
     suite = unittest.TestSuite()
     suite.addTest(CreateTest("test_user_table_create"))
     suite.addTest(CreateTest("test_user_create_single"))
     suite.addTest(CreateTest("test_user_create_app"))
+    suite.addTest(CreateTest("test_user_create_with_role"))
+    suite.addTest(CreateTest("test_user_create_with_role_error"))
     return suite
 
 

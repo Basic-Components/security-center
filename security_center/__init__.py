@@ -19,8 +19,10 @@ default_settings = {
     'ACCESS_LOG': True,
     'LOGO_PATH': None,
     "SSL": None,
-    "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
-    "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
+    #"TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
+    #"DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
+    "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
     "TEMPLATE_PATH": str(Path("./templates").absolute()),
     "STATIC_FOLDER": str(Path("./static").absolute())
 }

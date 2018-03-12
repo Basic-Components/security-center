@@ -50,25 +50,4 @@ class HashPasswordMixin:
         """
         hashed_new_password = self.__class__.hash_password(new_password)
         await self._change_attr("password",hashed_new_password)
-        # now = datetime.now()
-        # now_str = now.strftime(self.__class__.DATETIME_FMT)
-        
-        # history = dict(self.history)
-        # password_history = history.get("password")
-        # pw = {
-        #         "value":self._password,
-        #         "ctime":self._cpassword_time.strftime(self.__class__.DATETIME_FMT),
-        #         "dtime":now_str
-        #     }
-        # if password_history:
-        #     password_history.append(pw)
-        # else:
-        #     password_history=[pw]
-        # history.update({
-        #     "password": password_history
-        # })
-        # self._password = hashed_new_password
-        # self._cpassword_time = now
-        # self.history = history
-        # self.utime = now
-        # await self.save()
+       

@@ -15,7 +15,7 @@
         "description": "simple tools"
     },
     "form": {
-        "env": "env",
+        "env": "global",
         "compiler": "python",
         "project_form": "sanic",
         "template": "blueprints"

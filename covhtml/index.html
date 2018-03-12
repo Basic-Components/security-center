@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Coverage report</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="jquery.hotkeys.js"></script>
+    <script type="text/javascript" src="coverage_html.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(coverage.index_ready);
+    </script>
+</head>
+<body class="indexfile">
+
+<div id="header">
+    <div class="content">
+        <h1>Coverage report:
+            <span class="pc_cov">91%</span>
+        </h1>
+
+        <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
+
+        <form id="filter_container">
+            <input id="filter" type="text" value="" placeholder="filter..." />
+        </form>
+    </div>
+</div>
+
+<div class="help_panel">
+    <img id="panel_icon" src="keybd_open.png" alt="Hide keyboard shortcuts" />
+    <p class="legend">Hot-keys on this page</p>
+    <div>
+    <p class="keyhelp">
+        <span class="key">n</span>
+        <span class="key">s</span>
+        <span class="key">m</span>
+        <span class="key">x</span>
+        
+        <span class="key">c</span> &nbsp; change column sorting
+    </p>
+    </div>
+</div>
+
+<div id="index">
+    <table class="index">
+        <thead>
+            
+            <tr class="tablehead" title="Click to sort">
+                <th class="name left headerSortDown shortkey_n">Module</th>
+                <th class="shortkey_s">statements</th>
+                <th class="shortkey_m">missing</th>
+                <th class="shortkey_x">excluded</th>
+                
+                <th class="right shortkey_c">coverage</th>
+            </tr>
+        </thead>
+        
+        <tfoot>
+            <tr class="total">
+                <td class="name left">Total</td>
+                <td>326</td>
+                <td>29</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="297 326">91%</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center___init___py.html">security_center\__init__.py</a></td>
+                <td>27</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="27 27">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_api___init___py.html">security_center\api\__init__.py</a></td>
+                <td>4</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="4 4">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_api_sample_source_py.html">security_center\api\sample_source.py</a></td>
+                <td>13</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="13 13">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model___init___py.html">security_center\model\__init__.py</a></td>
+                <td>2</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="2 2">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_base_py.html">security_center\model\base.py</a></td>
+                <td>6</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="6 6">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user___init___py.html">security_center\model\user\__init__.py</a></td>
+                <td>11</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="11 11">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_core_py.html">security_center\model\user\core.py</a></td>
+                <td>126</td>
+                <td>15</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="111 126">88%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_create_mixin_py.html">security_center\model\user\create_mixin.py</a></td>
+                <td>15</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="15 15">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_get_user_mixin_py.html">security_center\model\user\get_user_mixin.py</a></td>
+                <td>7</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="7 7">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_hash_password_mixin_py.html">security_center\model\user\hash_password_mixin.py</a></td>
+                <td>18</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="18 18">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_real_name_auth_mixin_py.html">security_center\model\user\real_name_auth_mixin.py</a></td>
+                <td>14</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="14 14">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_role_mixin_py.html">security_center\model\user\role_mixin.py</a></td>
+                <td>11</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="11 11">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_social_account_mixin_py.html">security_center\model\user\social_account_mixin.py</a></td>
+                <td>27</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="27 27">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_status_mixin_py.html">security_center\model\user\status_mixin.py</a></td>
+                <td>17</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="17 17">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_model_user_thirdpart_auth_mixin_py.html">security_center\model\user\thirdpart_auth_mixin.py</a></td>
+                <td>8</td>
+                <td>4</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="4 8">50%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_view___init___py.html">security_center\view\__init__.py</a></td>
+                <td>2</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="2 2">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_view_helloword_py.html">security_center\view\helloword.py</a></td>
+                <td>14</td>
+                <td>10</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="4 14">29%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="security_center_view_init_py.html">security_center\view\init.py</a></td>
+                <td>4</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="4 4">100%</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <p id="no_rows">
+        No items found using the specified filter.
+    </p>
+</div>
+
+<div id="footer">
+    <div class="content">
+        <p>
+            <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.1</a>,
+            created at 2018-03-12 15:55
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

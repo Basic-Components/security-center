@@ -48,7 +48,8 @@ def login_info_default():
         'ip': None,  # ip地址
         'device': None,  # 设备
         'platform': None,  # 操作系统平台
-        'city': None  # ip地址指定的城市
+        'city': None,  # ip地址指定的城市
+        'time': None  # 登录的时间
     }
 
 
@@ -62,14 +63,23 @@ def changed_history_default():
     }
 
 
+def login_history_default():
+    return {
+        "last": None,
+        "statistics": {
+            'ip': None,
+            'device': None,
+            'platform': None,
+            'city': None,
+        }
+    }
+
+
 def access_authority_default():
     return [{
         'name': 'security-center',
         "ctime": datetime.now().strftime(DATETIME_FMT)
     }]
-
-
-
 
 
 class Core(BaseModel):
@@ -141,7 +151,7 @@ class Core(BaseModel):
     # 用户信息修改时间
     _changed_history = BinaryJSONField(default=changed_history_default)
     # 用户登录历史记录
-    _login_history = BinaryJSONField(null=True)
+    _login_history = BinaryJSONField(default=login_history_default)
 
     async def _change_attr(self, attr_name, new_value):
         value = getattr(self, "_" + attr_name)
@@ -175,38 +185,6 @@ class Core(BaseModel):
         else:
             result = None
         return result
-
-    @property
-    def status(self):
-        return dict(self.STATUS_CHOICES)[self._status]
-
-    async def set_status(self, value: str):
-        now = datetime.now()
-        real_value = {v: i for i, v in self.STATUS_CHOICES}.get(value)
-        if real_value is not None:
-            self._status = real_value
-            self._update_time = now
-            now = datetime.now()
-            if real_value == 1:
-                self._auth_time = now
-            elif real_value == 2:
-                self._close_time = now
-            await self.save()
-        else:
-            raise ValueError("Illegal status")
-
-    @property
-    def role(self):
-        return dict(self.ROLE_CHOICES)[self._role]
-
-    async def set_role(self, value: str):
-        now = datetime.now()
-        real_value = {v: i for i, v in self.ROLE_CHOICES}.get(value)
-        if real_value is not None:
-            self._role = real_value
-            await self.save()
-        else:
-            raise ValueError("Illegal role")
 
     @property
     def auth_time(self):
@@ -276,92 +254,5 @@ class Core(BaseModel):
         await self.save()
 
     @property
-    def social_accounts(self):
-        return self._social_accounts
-
-    async def set_social_accounts(self, new_value):
-        self._social_accounts = new_value
-        self._update_time = datetime.now()
-        await self.save()
-
-    @property
-    def real_name_auth(self):
-        return self._real_name_auth
-
-    async def set_real_name_authed(self):
-        if self._real_name_auth is True:
-            raise ValueError("already real name auth")
-        else:
-            now = datetime.now()
-            self._real_name_auth = True
-            self._real_name_auth_time = now
-            self._update_time = now
-            self.save()
-
-    @property
-    def real_name_auth_time(self):
-        return self._time_to_str("real_name_auth")
-
-    @property
-    def thirdpart_auth(self):
-        return self._thirdpart_auth
-
-    async def set_thirdpart_auth(self, new_value):
-        self._thirdpart_auth = new_value
-        self._update_time = datetime.now()
-        await self.save()
-
-    @property
-    def login_info(self):
-        return self._login_info
-
-    async def set_login_info(self, *, ip, device, platform, city):
-        old_info = dict(self._login_info)
-        now_str = datetime.now().strftime(self.DATETIME_FMT)
-        self._login_info = {
-            "ip": ip,
-            'device': device,  # 设备
-            'platform': platform,  # 操作系统平台
-            'city': city,  # ip地址指定的城市
-            'time': now_str
-        }
-        if self._login_history:
-            old_history = dict(self._login_history)
-        else:
-            old_history = {
-                'last': None,
-                "statistics": {
-                    "ip": [],
-                    'device': [],  # 设备
-                    'platform': [],  # 操作系统平台
-                    'city': []
-                }
-            }
-        result = {
-            "last": old_info,
-            "statistics": {}
-        }
-        for att, value in old_info.items():
-            if value in old_history["statistics"][att]:
-                result["statistics"][att] = {
-                    "count": old_history["statistics"][att]["count"] + 1,
-                    "first_time": old_history["statistics"][att]["first_time"],
-                    "last_time": old_info['time']
-                }
-            else:
-                result["statistics"][att] = {
-                    "count": 1,
-                    "first_time": old_info['time'],
-                    "last_time": old_info['time']
-                }
-
-        self._login_history = result
-        await self.save()
-
-    @property
     def changed_history(self):
         return self._changed_history
-
-    @property
-    def login_history(self):
-        return self._login_history
