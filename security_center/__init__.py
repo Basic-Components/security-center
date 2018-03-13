@@ -15,16 +15,18 @@ __VERSION__ = '0.0.5'
 app = Sanic("pmfptest")
 default_settings = {
     'DEBUG': True,
+    "TEST":False,
+    'SECRET':"cant guess",
     'HOST': '0.0.0.0',
     'PORT': 5000,
     'WORKERS': 1,
     'ACCESS_LOG': True,
     'LOGO_PATH': None,
     "SSL": None,
-    #"TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
-    #"DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
-    "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
-    "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
+    "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
+    #"TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    #"DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
     # "TEST_DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     # "DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     "TEMPLATE_PATH": str(Path("./templates").absolute()),
@@ -51,6 +53,9 @@ async def setup_db(app, loop):
 
 @app.listener('after_server_stop')
 async def close_db(app, loop):
+    # if app.config.TEST:
+    #     await db.drop_tables([User], safe=True)
+    #     print("[drop table]")
     await db.close()
 
 

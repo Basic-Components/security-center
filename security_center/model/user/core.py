@@ -103,17 +103,17 @@ class Core(BaseModel):
     # 用户信息更新时间
     _update_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
     # 用户别名
-    _nickname = CharField(unique=True, index=True)
+    _nickname = CharField(unique=True, max_length=20,index=True)
     # 用户创建当前别名的时间
     _nickname_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
     # 用户密码
-    _password = CharField()
+    _password = CharField(max_length=20)
     # 用户创建当前密码的时间
     _password_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
     # 用户邮箱
-    _email = CharField()
+    _email = CharField(unique=True,max_length=30)
     # 用户当前邮箱写入时间
     _email_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 

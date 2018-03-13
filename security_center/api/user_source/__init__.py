@@ -1,4 +1,6 @@
 """用户"""
+import sys
+import traceback
 from sanic.views import HTTPMethodView
 from sanic.response import json
 from security_center.model import User
@@ -73,10 +75,11 @@ class UserView(HTTPMethodView):
                 })
             u = await User.create_user(**kwargs)
         except Exception as e:
+            traceback.print_exc(file=sys.stdout)
             return json(
                 {"message": str(e)},
                 500
             )
         else:
-            print(u)
-            return json({"message": u})
+            print(u.uid)
+            return json({"message": str(u.uid)})

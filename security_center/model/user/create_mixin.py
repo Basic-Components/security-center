@@ -37,6 +37,6 @@ class CreateMixin:
             ]
             data.update({"access_authority": access_authority})
 
-        await cls.create(
+        return await cls.create(
             **data
         )

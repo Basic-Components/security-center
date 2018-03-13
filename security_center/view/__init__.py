@@ -1,2 +1,2 @@
-from .init import views, jinja
+from .init import views
 from .helloword import helloword

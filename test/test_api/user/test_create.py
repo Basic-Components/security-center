@@ -1,6 +1,7 @@
 import unittest
+import asyncio
 try:
-    from test.test_api.core import Core
+    from test.test_api.core import Core, User
 except:
     import sys
     from pathlib import Path
@@ -9,7 +10,7 @@ except:
     )
     if path not in sys.path:
         sys.path.append(path)
-    from core import Core
+    from core import Core, User
 
 
 def setUpModule():
@@ -22,34 +23,29 @@ def tearDownModule():
 
 class UserCreateTest(Core):
 
+    async def check_user_nickname(self, nickname, uid, loop):
+        await self.db.connect(loop)
+        user = await User.get(uid=uid)
+        assert nickname == user.nickname
+
     def test_create(self):
-        request, response = self.app.post(
-            '/api/User',
+        request, response = self.client.post(
+            '/api/user',
             json={
                 "nickname": 'hsz',
-                "password": 'qwer',
+                "password": 'qwer123Q',
                 'email': 'hsz1273327@gmail.com'
             }
         )
-        #self.assertEqual(response.json["message"], 'I am get method')
-        print(response.json["message"])
-
-    # def test_create_from_other_app(self):
-    #     request, response = self.app.post(
-    #         '/api/User',
-    #         json={
-    #             "nickname": 'hsz',
-    #             "password": 'Qwer123',
-    #             'email'
-    #         }
-    #     )
-    #     self.assertEqual(response.json["message"], 'I am get method')
+        uid = response.json["message"]
+        assert response.status == 200
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
 
 
 def user_create_suite():
     suite = unittest.TestSuite()
     suite.addTest(UserCreateTest("test_create"))
-
     return suite
 
 

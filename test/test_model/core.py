@@ -21,7 +21,7 @@ class Core(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         database = AioDbFactory(app.config.TEST_DB_URL)
-        database.salt = "qwe"
+        database.salt = app.config.SECRET
         cls.nickname = 'huangsizhe'
         cls.password = '12345'
         cls.email = "hsz1273327@gmail.com"
@@ -43,5 +43,5 @@ class Core(unittest.TestCase):
 
     async def _drop_table(self):
         """删除表."""
-        await db.drop_tables([User], safe=True)
-        await db.close()
+        await self.db.drop_tables([User], safe=True)
+        await self.db.close()

@@ -21,30 +21,26 @@ class Core(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         database = AioDbFactory(app.config.TEST_DB_URL)
+        database.salt = app.config.SECRET
         db.initialize(database)
-        cls.app = app.test_client
-        cls.loop = asyncio.new_event_loop()
+        app.config.update({
+            "TEST":True
+        })
+        cls.client = app.test_client
         cls.db = db
-        asyncio.set_event_loop(cls.loop)
         print("SetUp Api test context")
 
     @classmethod
     def tearDownClass(cls):
         print("TearDown Api test context")
 
-    def setUp(self):
-        self.loop.run_until_complete(self._create_table())
-        print("instance setUp")
-
     def tearDown(self):
-        print("instance tearDown")
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(self.clear_db(loop))
 
-    async def _create_table(self):
-        """创建表."""
-        await self.db.connect(self.loop)
-        await self.db.create_tables([User], safe=True)
+    async def clear_db(self,loop):
+        await db.connect(loop)
+        await db.drop_tables([User], safe=True)
+        await db.close()
+        print("[drop table done!]")
 
-    async def _drop_table(self):
-        """删除表."""
-        await self.db.drop_tables([User], safe=True)
-        await self.db.close()
