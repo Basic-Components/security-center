@@ -5,18 +5,13 @@ from sanic.response import json
 
 
 class UserChangePasswordView(HTTPMethodView):
+    """用户修改密码"""
 
     def get(self, request):
+        """请求修改密码,会发送包含token的邮件到注册邮箱"""
         return json({"message": 'I am get method'})
 
     def post(self, request):
+        """修改密码"""
         return json({"message": 'I am post method'})
 
-    def put(self, request):
-        return json({"message": 'I am put method'})
-
-    def patch(self, request):
-        return json({"message": 'I am patch method'})
-
-    def delete(self, request):
-        return json({"message": 'I am delete method'})

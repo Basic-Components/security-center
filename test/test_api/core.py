@@ -3,7 +3,7 @@ import unittest
 from aioorm.utils import AioDbFactory
 try:
     from security_center import app
-    from security_center.model import db
+    from security_center.model import db, User
 except:
     import sys
     from pathlib import Path
@@ -13,7 +13,7 @@ except:
     if path not in sys.path:
         sys.path.append(path)
     from security_center import app
-    from security_center.model import db
+    from security_center.model import db, User
 
 
 class Core(unittest.TestCase):
@@ -23,6 +23,9 @@ class Core(unittest.TestCase):
         database = AioDbFactory(app.config.TEST_DB_URL)
         db.initialize(database)
         cls.app = app.test_client
+        cls.loop = asyncio.new_event_loop()
+        cls.db = db
+        asyncio.set_event_loop(cls.loop)
         print("SetUp Api test context")
 
     @classmethod
@@ -30,7 +33,7 @@ class Core(unittest.TestCase):
         print("TearDown Api test context")
 
     def setUp(self):
-        self.loop.run_until_complete
+        self.loop.run_until_complete(self._create_table())
         print("instance setUp")
 
     def tearDown(self):
@@ -43,5 +46,5 @@ class Core(unittest.TestCase):
 
     async def _drop_table(self):
         """删除表."""
-        await db.drop_tables([User], safe=True)
-        await db.close()
+        await self.db.drop_tables([User], safe=True)
+        await self.db.close()

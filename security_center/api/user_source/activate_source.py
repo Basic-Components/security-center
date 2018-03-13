@@ -10,9 +10,10 @@ class UserActivateView(HTTPMethodView):
         return json({"message": 'I am get method'})
 
     def post(self, request):
-        """激活"""
+        """使用激活token激活用户"""
         return json({"message": 'I am post method'})
 
     def delete(self,request):
+        """使用注销token注销用户"""
         return 
 

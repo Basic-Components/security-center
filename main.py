@@ -4,8 +4,8 @@ import argparse
 from pathlib import Path
 import yaml
 from aioorm.utils import AioDbFactory
-from security-center import app, __VERSION__
-from security-center.model import db
+from security_center import app, __VERSION__
+from security_center.model import db
 
 
 def _load_conf(path):
