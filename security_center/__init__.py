@@ -6,7 +6,8 @@ from sanic_session import InMemorySessionInterface
 #from sanic_mail import Sanic_Mail
 from jinja2 import FileSystemLoader
 from .api import apis
-from .view import views, jinja
+from .view import views
+from .init_jinja import jinja
 from .model import db, User
 
 
