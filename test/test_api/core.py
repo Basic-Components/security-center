@@ -28,3 +28,20 @@ class Core(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print("TearDown Api test context")
+
+    def setUp(self):
+        self.loop.run_until_complete
+        print("instance setUp")
+
+    def tearDown(self):
+        print("instance tearDown")
+
+    async def _create_table(self):
+        """创建表."""
+        await self.db.connect(self.loop)
+        await self.db.create_tables([User], safe=True)
+
+    async def _drop_table(self):
+        """删除表."""
+        await db.drop_tables([User], safe=True)
+        await db.close()

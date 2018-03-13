@@ -1,8 +1,10 @@
+"""修改密码接口."""
+
 from sanic.views import HTTPMethodView
 from sanic.response import json
 
 
-class SimpleView(HTTPMethodView):
+class UserChangePasswordView(HTTPMethodView):
 
     def get(self, request):
         return json({"message": 'I am get method'})

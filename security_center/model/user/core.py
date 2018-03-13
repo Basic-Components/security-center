@@ -67,10 +67,10 @@ def login_history_default():
     return {
         "last": None,
         "statistics": {
-            'ip': None,
-            'device': None,
-            'platform': None,
-            'city': None,
+            'ip': {},
+            'device': {},
+            'platform': {},
+            'city': {},
         }
     }
 

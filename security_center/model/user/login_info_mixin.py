@@ -46,46 +46,26 @@ class LoginInfoMixin:
             await self.save()
             return
 
-        if self._login_history:
-            old_history = dict(self._login_history)
-        else:
-            old_history = {
-                'last': None,
-                "statistics": {
-                    "ip": [],
-                    'device': [],  # 设备
-                    'platform': [],  # 操作系统平台
-                    'city': []
-                }
-            }
+        old_history = dict(self._login_history)
 
-        print("########")
-        print(old_info)
-
-        result = {
-            "last": old_info,
-            "statistics": {}
-        }
         for att, value in old_info.items():
-            if old_history["statistics"][att] is None:
-                result["statistics"][att] = {
-                    "count": 1,
-                    "first_time": old_info['time'],
+            if att == "time":
+                continue
+            if value in old_history["statistics"][att].keys():
+                old_history["statistics"][att][value] = {
+                    "count": old_history["statistics"][att][value]["count"] + 1,
+                    "first_time": old_history["statistics"][att][value]["first_time"],
                     "last_time": old_info['time']
                 }
-            if value in old_history["statistics"][att]:
-                result["statistics"][att] = [{
-                    "count": old_history["statistics"][att]["count"] + 1,
-                    "first_time": old_history["statistics"][att]["first_time"],
-                    "last_time": old_info['time']
-                }]
             else:
-                result["statistics"][att] = {
+
+                old_history["statistics"][att][value] = {
                     "count": 1,
                     "first_time": old_info['time'],
                     "last_time": old_info['time']
                 }
-        self._login_history = result
+        old_history["last"] = old_info
+        self._login_history = old_history
         await self.save()
 
     @property
