@@ -38,6 +38,7 @@ class UserCreateTest(Core):
             }
         )
         uid = response.json["message"]
+        print(response.status)
         assert response.status == 200
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))

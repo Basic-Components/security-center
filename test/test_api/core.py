@@ -39,7 +39,10 @@ class Core(unittest.TestCase):
         loop.run_until_complete(self.clear_db(loop))
 
     async def clear_db(self,loop):
-        await db.connect(loop)
+        try:
+            await db.connect(loop)
+        except:
+            pass
         await db.drop_tables([User], safe=True)
         await db.close()
         print("[drop table done!]")
