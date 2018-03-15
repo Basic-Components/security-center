@@ -38,7 +38,21 @@ class UserCreateTest(Core):
             }
         )
         uid = response.json["message"]
-        print(response.status)
+        assert response.status == 200
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
+
+    def test_app_create(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwer123Q',
+                'email': 'hsz1273327@gmail.com',
+                "access_authority":"myapp"
+            }
+        )
+        uid = response.json["message"]
         assert response.status == 200
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
@@ -107,6 +121,7 @@ class UserCreateTest(Core):
 def user_create_suite():
     suite = unittest.TestSuite()
     suite.addTest(UserCreateTest("test_create"))
+    suite.addTest(UserCreateTest("test_app_create"))
     suite.addTest(UserCreateTest("test_create_param_lack"))
     suite.addTest(UserCreateTest("test_create_with_role"))
     suite.addTest(UserCreateTest("test_create_email_error"))

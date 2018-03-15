@@ -24,10 +24,10 @@ default_settings = {
     'ACCESS_LOG': True,
     'LOGO_PATH': None,
     "SSL": None,
-    # "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
-    # "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
-    "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
-    "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
+    "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
+    # "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    # "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
     # "TEST_DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     # "DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     "TEMPLATE_PATH": str(Path("./templates").absolute()),
@@ -46,7 +46,7 @@ jinja.init_app(app, loader=loader)
 redis.init_app(app)
 session = RedisSessionInterface(
     redis.get_redis_pool,
-    cookie_name=app.name,
+    #cookie_name=app.name,
     prefix=app.name + "::Session::",
     expiry=app.config.SESSION_TIMEOUT + 3600)
 app.blueprint(views)

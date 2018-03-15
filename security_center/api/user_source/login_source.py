@@ -1,4 +1,6 @@
 """用户登录资源."""
+import sys
+import traceback
 from sanic.views import HTTPMethodView
 from sanic.response import json
 from security_center.model import User
@@ -20,7 +22,7 @@ class UserLoginView(HTTPMethodView):
             user = user1
         if user.check_password(request.json["password"]) is False:
             return json({"message": "password error"}, 401)
-        request['session']['uid'] = user.uid
+        request['session']['uid'] = str(user.uid)
         return json(
             {
                 "message": 'set token in your session',
@@ -32,16 +34,16 @@ class UserLoginView(HTTPMethodView):
         """退出登录."""
         try:
             uid = request['session']['uid']
-        except:
+        except KeyError:
+            traceback.print_exc(file=sys.stdout)
             return json({
-                "message": "log in again!"
+                "message": "wrong session,log in again!"
             }, 401)
+        except Exception as e:
+            traceback.print_exc(file=sys.stdout)
+            return json({
+                "message": str(e)
+            }, 500)
         else:
-            user = await User.get(User.uid == uid)
-            if user is None:
-                return json({
-                    "message": "unknown user!"
-                }, 404)
-            else:
-                request['session'] == None
-                return json({"message": 'log out done'})
+            request['session'] == None
+            return json({"message": 'log out done'})

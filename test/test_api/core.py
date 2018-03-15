@@ -34,6 +34,7 @@ class Core(unittest.TestCase):
             aioredis.create_pool,
             app.config.REDIS_URL
         )
+        cls.session_pix = app.name + "::Session::"
         print("SetUp Api test context")
 
     @classmethod

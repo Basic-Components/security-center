@@ -90,7 +90,6 @@ class RedisSessionInterface(BaseSessionInterface):
 
             if request['session'].modified:
                 self._delete_cookie(request, response)
-
             return
 
         val = ujson.dumps(dict(request['session']))

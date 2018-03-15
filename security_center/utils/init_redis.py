@@ -26,6 +26,7 @@ class Redis:
             #     print("[drop table]")
             self._pool.close()
             await self._pool.wait_closed()
+            self._pool = None
 
     async def get_redis_pool(self):
         if not self._pool:
