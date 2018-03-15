@@ -2,21 +2,22 @@ from pathlib import Path
 from sanic import Sanic
 from sanic import response
 from sanic.response import json
-from sanic_session import InMemorySessionInterface
 #from sanic_mail import Sanic_Mail
 from jinja2 import FileSystemLoader
 from .api import apis
 from .view import views
-from .init_jinja import jinja
 from .model import db, User
-
+from .utils.aioredis_interface import RedisSessionInterface
+from .utils.init_jinja import jinja
+from .utils.init_redis import redis
 
 __VERSION__ = '0.0.5'
-app = Sanic("pmfptest")
+app = Sanic("security-center")
+
 default_settings = {
     'DEBUG': True,
-    "TEST":False,
-    'SECRET':"cant guess",
+    "TEST": False,
+    'SECRET': "cant guess",
     'HOST': '0.0.0.0',
     'PORT': 5000,
     'WORKERS': 1,
@@ -35,12 +36,19 @@ default_settings = {
     'MAIL_SENDER_PASSWORD': "Hszsword881224",
     'MAIL_SEND_HOST': "smtp.exmail.qq.com",
     'MAIL_SEND_PORT': 465,
-    'MAIL_TLS': True}
+    'MAIL_TLS': True,
+    'REDIS_URL': 'redis://localhost:6379/2',
+    'SESSION_TIMEOUT': 7 * 24 * 60 * 60}
 app.config.update(default_settings)
 loader = FileSystemLoader(app.config.TEMPLATE_PATH)
 jinja.init_app(app, loader=loader)
 #sender = Sanic_Mail(app)
-session = InMemorySessionInterface(cookie_name=app.name, prefix=app.name)
+redis.init_app(app)
+session = RedisSessionInterface(
+    redis.get_redis_pool,
+    cookie_name=app.name,
+    prefix=app.name + "::Session::",
+    expiry=app.config.SESSION_TIMEOUT + 3600)
 app.blueprint(views)
 app.blueprint(apis)
 

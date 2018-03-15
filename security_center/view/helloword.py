@@ -1,6 +1,6 @@
 from ..model.user import User
 from .init import views
-from security_center.init_jinja import jinja
+from security_center.utils.init_jinja import jinja
 
 
 @views.get("/")

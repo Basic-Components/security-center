@@ -12,7 +12,7 @@ class UserView(HTTPMethodView):
     async def post(self, request):
         """创建一个新用户.
 
-        只允许创建普通用户.
+        只允许创建普通用户.创建完用户需要先登录激活,后会发送一封邮件用于确认
 
         Args:
             nickname (str): - 昵称
@@ -24,9 +24,10 @@ class UserView(HTTPMethodView):
         Raises:
             message (500) : - 未知错误的错误信息
             message (501) : - 必要的请求数据不全
-            message (502) : - email形式不正确
-            message (503) : - 密码不能低于6位
-            message (504) : - 密码必须有数字,大写字母,小写字母
+            message (502) : - 不支持通过api创建权限用户
+            message (503) : - email形式不正确
+            message (504) : - 密码不能低于6位
+            message (505) : - 密码必须有数字,大写字母,小写字母
 
         Returns:
             message (str): - 返回ok
@@ -38,16 +39,17 @@ class UserView(HTTPMethodView):
                 )
         if request.json.get("role"):
             return json(
-                {"message": "cannot create {} user".format(request.json.get("role"))}
+                {"message": "cannot create {} user".format(request.json.get("role"))}, 502
             )
         if "@" not in request.json.get("email"):
             return json(
-                {"message": "email format error"}, 502
+                {"message": "email format error"}, 503
             )
         pwd = request.json.get('password')
         if len(pwd) < 6:
+            print(pwd)
             return json(
-                {"message": "password must longger than 6"}, 503
+                {"message": "password must longger than 6"}, 504
             )
         numeric = False
         lower = False
@@ -61,7 +63,7 @@ class UserView(HTTPMethodView):
                 upper = True
         if not all([numeric, lower, upper]):
             return json(
-                {"message": "password must have upper,lower and numeric"}, 504
+                {"message": "password must have upper,lower and numeric"}, 505
             )
         try:
             kwargs = {
@@ -81,5 +83,5 @@ class UserView(HTTPMethodView):
                 500
             )
         else:
-            print(u.uid)
             return json({"message": str(u.uid)})
+

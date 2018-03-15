@@ -43,10 +43,75 @@ class UserCreateTest(Core):
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
 
+    def test_create_param_lack(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwer123Q'
+            }
+        )
+        uid = response.json["message"]
+        assert response.status == 501
+
+    def test_create_with_role(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwer123Q',
+                'email': 'hsz1273327@gmail.com',
+                'role': "管理员"
+            }
+        )
+        uid = response.json["message"]
+        assert response.status == 502
+
+    def test_create_email_error(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwer123Q',
+                'email': 'hsz1273327com'
+            }
+        )
+        uid = response.json["message"]
+        assert response.status == 503
+
+    def test_create_pw_len_error(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwe1Q',
+                'email': 'hsz1273327@gmail.com'
+            }
+        )
+        uid = response.json["message"]
+        assert response.status == 504
+
+    def test_create_pw_form_error(self):
+        request, response = self.client.post(
+            '/api/user',
+            json={
+                "nickname": 'hsz',
+                "password": 'qwe132',
+                'email': 'hsz1273327@gmail.com'
+            }
+        )
+        uid = response.json["message"]
+        assert response.status == 505
+
 
 def user_create_suite():
     suite = unittest.TestSuite()
     suite.addTest(UserCreateTest("test_create"))
+    suite.addTest(UserCreateTest("test_create_param_lack"))
+    suite.addTest(UserCreateTest("test_create_with_role"))
+    suite.addTest(UserCreateTest("test_create_email_error"))
+    suite.addTest(UserCreateTest("test_create_pw_len_error"))
+    suite.addTest(UserCreateTest("test_create_pw_form_error"))
     return suite
 
 

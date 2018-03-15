@@ -1,4 +1,6 @@
 import asyncio
+from functools import partial
+import aioredis
 import unittest
 from aioorm.utils import AioDbFactory
 try:
@@ -24,10 +26,14 @@ class Core(unittest.TestCase):
         database.salt = app.config.SECRET
         db.initialize(database)
         app.config.update({
-            "TEST":True
+            "TEST": True
         })
         cls.client = app.test_client
         cls.db = db
+        cls.get_redis_pool = partial(
+            aioredis.create_pool,
+            app.config.REDIS_URL
+        )
         print("SetUp Api test context")
 
     @classmethod
@@ -38,7 +44,7 @@ class Core(unittest.TestCase):
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.clear_db(loop))
 
-    async def clear_db(self,loop):
+    async def clear_db(self, loop):
         try:
             await db.connect(loop)
         except:
@@ -47,3 +53,13 @@ class Core(unittest.TestCase):
         await db.close()
         print("[drop table done!]")
 
+    async def _create_table(self):
+        """创建表."""
+        loop = asyncio.new_event_loop()
+        await self.db.connect(loop)
+        await self.db.create_tables([User], safe=True)
+
+    async def _drop_table(self):
+        """删除表."""
+        await self.db.drop_tables([User], safe=True)
+        await self.db.close()
