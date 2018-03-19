@@ -16,7 +16,7 @@ class CreateMixin:
             '_password': cls.hash_password(password),
             '_email': email
         }
-        
+
         if role:
             role_value = {v: i for i, v in cls.ROLE_CHOICES}.get(role)
             if role_value is None:

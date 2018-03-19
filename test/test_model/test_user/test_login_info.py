@@ -45,7 +45,6 @@ class LoginInfoTest(Core):
                 {
                     'ip': None,
                     'device': None,
-                    'platform': None,
                     'city': None,
                     'time': None
                 }
@@ -53,12 +52,10 @@ class LoginInfoTest(Core):
             assert user.login_history["last"] is None
             await user.set_login_info(
                 ip="119.137.54.34",
-                device="pc",
-                platform="windows"
+                device="pc"
             )
             assert user.login_info.get("ip") == '119.137.54.34'
             assert user.login_info.get("device") == 'pc'
-            assert user.login_info.get("platform") == 'windows'
             assert user.login_info.get("city") == '广东省深圳市'
         except:
             raise
@@ -82,7 +79,6 @@ class LoginInfoTest(Core):
                 {
                     'ip': None,
                     'device': None,
-                    'platform': None,
                     'city': None,
                     'time': None
                 }
@@ -90,33 +86,26 @@ class LoginInfoTest(Core):
             assert user.login_history["last"] is None
             await user.set_login_info(
                 ip="119.137.54.34",
-                device="pc",
-                platform="windows"
+                device="pc"
             )
             await user.set_login_info(
                 ip="119.137.54.34",
-                device="mobile",
-                platform="android"
+                device="mobile"
             )
             assert user.login_info.get("ip") == '119.137.54.34'
             assert user.login_info.get("device") == 'mobile'
-            assert user.login_info.get("platform") == 'android'
             assert user.login_info.get("city") == '广东省深圳市'
             assert user.login_history["last"]["device"] == 'pc'
-            assert user.login_history["last"]["platform"] == 'windows'
             assert len(user.login_history['statistics']["ip"]) == 1
             assert user.login_history['statistics']["ip"]["119.137.54.34"]["count"] == 1
             await user.set_login_info(
                 ip="119.137.54.34",
-                device="mobile",
-                platform="android"
+                device="mobile"
             )
             assert user.login_info.get("ip") == '119.137.54.34'
             assert user.login_info.get("device") == 'mobile'
-            assert user.login_info.get("platform") == 'android'
             assert user.login_info.get("city") == '广东省深圳市'
             assert user.login_history["last"]["device"] == 'mobile'
-            assert user.login_history["last"]["platform"] == 'android'
             assert len(user.login_history['statistics']["ip"]) == 1
             assert user.login_history['statistics']["ip"]["119.137.54.34"]["count"] == 2
         except:

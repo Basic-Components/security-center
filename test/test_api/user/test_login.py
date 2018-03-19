@@ -45,10 +45,31 @@ class UserloginTest(Core):
             value = await conn.execute('GET', self.session_pix + session)
             value = ujson.loads(value)["uid"]
         await self.db.connect()
-        user = await User.get(User.uid==value)
+        user = await User.get(User.uid == value)
         assert 'hsz' == user.nickname
         pool.close()
         await pool.wait_closed()
+
+    def test_check_right(self):
+        request, response = self.client.post(
+            '/api/user/login',
+            json={
+                "username": 'hsz',
+                "password": 'qwe1Q23'
+            }
+        )
+        session = response.json["token"]
+        cookies = {
+            "session": session
+        }
+        request, response = self.client.get(
+            '/api/user/login', params={"application": "security-center"}, cookies=cookies
+        )
+        assert response.json["can_access"] is True
+        request, response = self.client.get(
+            '/api/user/login', params={"application": "myapp"}, cookies=cookies
+        )
+        assert response.json["can_access"] is False
 
     def test_login_with_nickname(self):
         request, response = self.client.post(
@@ -73,6 +94,28 @@ class UserloginTest(Core):
         session = response.json["token"]
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_session(session))
+
+    def test_login_with_application(self):
+        request, response = self.client.post(
+            '/api/user/login',
+            json={
+                "username": 'hsz1273327@gmail.com',
+                "password": 'qwe1Q23',
+                "application": "security-center"
+            }
+        )
+        assert response.json["can_access"] == True
+
+    def test_login_with_no_valid_application(self):
+        request, response = self.client.post(
+            '/api/user/login',
+            json={
+                "username": 'hsz1273327@gmail.com',
+                "password": 'qwe1Q23',
+                "application": "myapp"
+            }
+        )
+        assert response.json["can_access"] == False
 
     def test_login_unknown_user(self):
         request, response = self.client.post(
@@ -127,11 +170,13 @@ class UserloginTest(Core):
         assert response.status == 401
 
 
-
-def user_create_suite():
+def user_login_suite():
     suite = unittest.TestSuite()
+    suite.addTest(UserloginTest("test_check_right"))
     suite.addTest(UserloginTest("test_login_with_nickname"))
     suite.addTest(UserloginTest("test_login_with_email"))
+    suite.addTest(UserloginTest("test_login_with_application"))
+    suite.addTest(UserloginTest("test_login_with_no_valid_application"))
     suite.addTest(UserloginTest("test_login_unknown_user"))
     suite.addTest(UserloginTest("test_login_pwd_error"))
     suite.addTest(UserloginTest("test_logout_with_session"))
@@ -142,5 +187,5 @@ def user_create_suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)
-    test_suite = user_create_suite()
+    test_suite = user_login_suite()
     runner.run(test_suite)

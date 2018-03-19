@@ -15,7 +15,6 @@ async def _get_city(ip):
             }
         ) as response:
             txt = await response.text()
-            # txt.encode('gb18030')#.decode("utf-8")
             html = HTML(html=txt)
             html.encoding = "utf-8"
             lis = html.find('li')
@@ -28,7 +27,7 @@ class LoginInfoMixin:
     def login_info(self):
         return self._login_info
 
-    async def set_login_info(self, *, ip, device, platform):
+    async def set_login_info(self, *, ip, device):
         old_info = dict(self._login_info)
         now_str = datetime.now().strftime(self.DATETIME_FMT)
         try:
@@ -38,7 +37,6 @@ class LoginInfoMixin:
         self._login_info = {
             "ip": ip,
             'device': device,  # 设备
-            'platform': platform,  # 操作系统平台
             'city': city,  # ip地址指定的城市
             'time': now_str
         }

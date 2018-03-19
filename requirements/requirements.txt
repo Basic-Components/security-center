@@ -8,3 +8,5 @@ aioorm==0.1.2
 requests_html
 sanic_mail
 aioredis
+ua-parser 
+user-agents

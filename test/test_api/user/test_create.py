@@ -37,7 +37,7 @@ class UserCreateTest(Core):
                 'email': 'hsz1273327@gmail.com'
             }
         )
-        uid = response.json["message"]
+        uid = response.json["uid"]
         assert response.status == 200
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
@@ -49,10 +49,10 @@ class UserCreateTest(Core):
                 "nickname": 'hsz',
                 "password": 'qwer123Q',
                 'email': 'hsz1273327@gmail.com',
-                "access_authority":"myapp"
+                "access_authority": "myapp"
             }
         )
-        uid = response.json["message"]
+        uid = response.json["uid"]
         assert response.status == 200
         loop = asyncio.new_event_loop()
         loop.run_until_complete(self.check_user_nickname('hsz', uid, loop))
@@ -65,7 +65,6 @@ class UserCreateTest(Core):
                 "password": 'qwer123Q'
             }
         )
-        uid = response.json["message"]
         assert response.status == 501
 
     def test_create_with_role(self):
@@ -78,7 +77,6 @@ class UserCreateTest(Core):
                 'role': "管理员"
             }
         )
-        uid = response.json["message"]
         assert response.status == 502
 
     def test_create_email_error(self):
@@ -90,7 +88,6 @@ class UserCreateTest(Core):
                 'email': 'hsz1273327com'
             }
         )
-        uid = response.json["message"]
         assert response.status == 503
 
     def test_create_pw_len_error(self):
@@ -102,7 +99,6 @@ class UserCreateTest(Core):
                 'email': 'hsz1273327@gmail.com'
             }
         )
-        uid = response.json["message"]
         assert response.status == 504
 
     def test_create_pw_form_error(self):
@@ -114,7 +110,6 @@ class UserCreateTest(Core):
                 'email': 'hsz1273327@gmail.com'
             }
         )
-        uid = response.json["message"]
         assert response.status == 505
 
 

@@ -2,7 +2,7 @@ from pathlib import Path
 from sanic import Sanic
 from sanic import response
 from sanic.response import json
-#from sanic_mail import Sanic_Mail
+from sanic_mail import Sanic_Mail
 from jinja2 import FileSystemLoader
 from .api import apis
 from .view import views
@@ -10,6 +10,7 @@ from .model import db, User
 from .utils.aioredis_interface import RedisSessionInterface
 from .utils.init_jinja import jinja
 from .utils.init_redis import redis
+from .utils.init_serializer import activate_ser
 
 __VERSION__ = '0.0.5'
 app = Sanic("security-center")
@@ -18,16 +19,17 @@ default_settings = {
     'DEBUG': True,
     "TEST": False,
     'SECRET': "cant guess",
+    'BASE_URL': 'http://localhost:5000',
     'HOST': '0.0.0.0',
     'PORT': 5000,
     'WORKERS': 1,
     'ACCESS_LOG': True,
     'LOGO_PATH': None,
     "SSL": None,
-    "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
-    "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
-    # "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
-    # "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    # "TEST_DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_sql",
+    # "DB_URL": "postgresql://huangsizhe:@127.0.0.1:5432/test_ext",
+    "TEST_DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
+    "DB_URL": "postgresql://postgres:rstrst@127.0.0.1:5432/test",
     # "TEST_DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     # "DB_URL": "postgresql://postgres:hsz881224@127.0.0.1:5432/test",
     "TEMPLATE_PATH": str(Path("./templates").absolute()),
@@ -38,15 +40,18 @@ default_settings = {
     'MAIL_SEND_PORT': 465,
     'MAIL_TLS': True,
     'REDIS_URL': 'redis://localhost:6379/2',
-    'SESSION_TIMEOUT': 7 * 24 * 60 * 60}
+    'SESSION_TIMEOUT': 7 * 24 * 60 * 60,
+    'ACTIVATE_TIMEOUT': 60 * 60
+}
 app.config.update(default_settings)
 loader = FileSystemLoader(app.config.TEMPLATE_PATH)
 jinja.init_app(app, loader=loader)
-#sender = Sanic_Mail(app)
+sender = Sanic_Mail(app)
 redis.init_app(app)
+activate_ser.init_app(app, app.config.ACTIVATE_TIMEOUT)
 session = RedisSessionInterface(
     redis.get_redis_pool,
-    #cookie_name=app.name,
+    # cookie_name=app.name,
     prefix=app.name + "::Session::",
     expiry=app.config.SESSION_TIMEOUT + 3600)
 app.blueprint(views)

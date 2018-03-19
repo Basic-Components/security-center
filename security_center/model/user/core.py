@@ -47,7 +47,6 @@ def login_info_default():
     return {
         'ip': None,  # ip地址
         'device': None,  # 设备
-        'platform': None,  # 操作系统平台
         'city': None,  # ip地址指定的城市
         'time': None  # 登录的时间
     }
@@ -69,7 +68,6 @@ def login_history_default():
         "statistics": {
             'ip': {},
             'device': {},
-            'platform': {},
             'city': {},
         }
     }
@@ -103,7 +101,7 @@ class Core(BaseModel):
     # 用户信息更新时间
     _update_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
     # 用户别名
-    _nickname = CharField(unique=True, max_length=40,index=True)
+    _nickname = CharField(unique=True, max_length=40, index=True)
     # 用户创建当前别名的时间
     _nickname_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
@@ -113,7 +111,7 @@ class Core(BaseModel):
     _password_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
     # 用户邮箱
-    _email = CharField(unique=True,max_length=40)
+    _email = CharField(unique=True, max_length=40)
     # 用户当前邮箱写入时间
     _email_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 

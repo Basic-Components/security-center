@@ -1,13 +1,45 @@
-"""用户"""
+"""用户."""
 import sys
 import traceback
 from sanic.views import HTTPMethodView
 from sanic.response import json
 from security_center.model import User
+from security_center.utils.init_serializer import activate_ser
+from security_center.utils.init_jinja import jinja
 
 
 class UserView(HTTPMethodView):
     """用户资源的创建."""
+
+    async def get(self, request):
+        return json(
+            {
+                "message": "you can access the User source by this url",
+                "links": [
+                    {
+                        "url": "/api/user",
+                        "methods": {
+                            "post": "create_user"
+                        }
+                    },
+                    {
+                        "url": "/api/user/login",
+                        "method": {
+                            "get": "check access right",
+                            "post": "login",
+                            "delete": 'logout'
+                        }
+                    },
+                    {
+                        "url": "/api/user/profile",
+                        "method": {
+                            "get": "check access right",
+                            "post": "login"
+                        }
+                    }
+                ]
+            }
+        )
 
     async def post(self, request):
         """创建一个新用户.
@@ -47,7 +79,6 @@ class UserView(HTTPMethodView):
             )
         pwd = request.json.get('password')
         if len(pwd) < 6:
-            print(pwd)
             return json(
                 {"message": "password must longger than 6"}, 504
             )
@@ -83,5 +114,20 @@ class UserView(HTTPMethodView):
                 500
             )
         else:
-            return json({"message": str(u.uid)})
-
+            token = activate_ser.dumps({"uid": str(u.uid)})
+            activate_url = request.app.config.BASE_URL + "/user/activate/?token=" + token
+            content = jinja.env.get_template('emails/activate.html').render(
+                activate_url=activate_url
+            )
+            await request.app.send_email(
+                targetlist=u.email,
+                subject="激活邮件",
+                content=content,
+                html=True
+            )
+        return json(
+            {
+                "uid": str(u.uid),
+                "message": "have sent activate email to your email address"
+            }
+        )
