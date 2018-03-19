@@ -1,2 +1,2 @@
 from .init import views
-from .helloword import helloword
+from .helloword import *

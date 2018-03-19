@@ -8,15 +8,16 @@ from .init import views
 
 @views.get("/")
 async def index(request):
-    try:
-        uid = request['session']['uid']
-    except KeyError:
+    # try:
+    #     uid = request['session']['uid']
+    # except KeyError:
 
-        return redirect("/login")
-    else:
-        content = jinja.env.get_template('index.html').render(
-        )
-        return html(content)
+    #     return redirect("/login")
+    # else:
+    content = jinja.env.get_template('index.html').render(
+        title="WERF"
+    )
+    return html(content)
 
 
 @views.get("/login")
@@ -92,3 +93,5 @@ async def view_forget_password(request):
 @views.get("/reset_password/activate")
 async def view_forget_password_activate(request):
     pass
+
+__all__=["index"]

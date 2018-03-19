@@ -1,7 +1,6 @@
 {% extends 'components/skeleton.html' %} 
 {% block head %} 
-{% from 'components/head.html' import create_head %}
-{{ create_head({{ title }}) }}
+    {% include 'components/head.html' %}
 {% endblock %}
 {% block style %}
 <style></style>
