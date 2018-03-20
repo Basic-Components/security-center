@@ -3,36 +3,37 @@ import itsdangerous
 from security_center.utils.init_jinja import jinja
 from security_center.utils.init_serializer import activate_ser
 from security_center.model.user import User
-from .init import views
+from .init import views, verify_logined
 
 
-@views.get("/")
+@views.get("/", name="home")
 async def index(request):
-    # try:
-    #     uid = request['session']['uid']
-    # except KeyError:
-
-    #     return redirect("/login")
-    # else:
+    user = await verify_logined(request)
+    sections = [i for i in views.routes if i.name in ("login", "signup")]
     content = jinja.env.get_template('index.html').render(
-        title="WERF"
+        title="home",
+        base_url=request.app.config.BASE_URL,
+        sections=sections,
+        logined=True if user else False
     )
     return html(content)
 
 
-@views.get("/login")
+@views.get("/login", name="login")
 async def view_login(request):
-    try:
-        uid = request['session']['uid']
-    except KeyError:
-        content = jinja.env.get_template('login.html').render(
-        )
-        return html(content)
-    else:
-        return redirect('/')
+    pass
+
+    # try:
+    #     uid = request['session']['uid']
+    # except KeyError:
+    #     content = jinja.env.get_template('login.html').render(
+    #     )
+    #     return html(content)
+    # else:
+    #     return redirect('/')
 
 
-@views.get("/signup")
+@views.get("/signup", name="signup")
 async def view_signup(request):
     try:
         uid = request['session']['uid']
@@ -44,7 +45,7 @@ async def view_signup(request):
         return redirect('/')
 
 
-@views.get("/activate")
+@views.get("/activate", name="activate")
 async def view_activate(request):
     try:
         token = request.raw_args["token"]
@@ -85,13 +86,13 @@ async def view_activate(request):
             )
 
 
-@views.get("/reset_password")
+@views.get("/reset_password", name="reset_password")
 async def view_forget_password(request):
     pass
 
 
-@views.get("/reset_password/activate")
+@views.get("/reset_password/activate", name="reset_password_activate")
 async def view_forget_password_activate(request):
     pass
 
-__all__=["index"]
+__all__ = ["index"]
