@@ -14,7 +14,7 @@ class RealNameAuthMixin:
             self._real_name_auth = True
             self._real_name_auth_time = now
             self._update_time = now
-            self.save()
+            await self.save()
 
     @property
     def real_name_auth_time(self):

@@ -1,26 +1,56 @@
-{% extends 'base.html' %} {% block content %} {% if logined %}
-<h1>Welcome</h1>
-{% else %}
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="container text-center modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-        <div class="row modal-dialog modal-sm" role="document">
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+    <h1 class="text-center">欢迎使用用户信息系统</h1>
+    <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
             <div class="row">
-                <div class="modal-content">
-                    <div class="btn-group" role="group" aria-label="choose_log">
-                        <button type="button" class="btn btn-default activate">Log In</button>
-                        <button type="button" class="btn btn-default">Sign Up</button>
-                    </div>
+                <div class="col-md-4">
                 </div>
-                <div class="row">
-                    {% include 'components/log.html'%}
+                <p class="col-md-4">
+                    <button type="button" class="btn btn-default active" id="b_login" onclick="login()">登录</button>
+                    <button type="button" class="btn btn-default" id="b_signup" onclick="signup()">注册</button> 
+                </p>
+                <div class="col-md-4">
                 </div>
             </div>
+            <div class="row" id="log_form">
+                {% include 'components/login.html' %}
+            </div>
+        </div>
+        <div class="col-md-3">
         </div>
     </div>
-    {% endif %} {% endblock %} {% block script %}
-    <script>
-        $('#myModal').on('shown.bs.modal', function () {
-            $('#myInput').focus()
-        })
-    </script>
-    {% endblock %}
+</div>
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
+    function login() {
+        if ($("#b_login").hasClass("active")){
+            console.log("activated")
+        } else{
+            $("#b_signup").removeClass("active")
+            $("#b_login").addClass("active")
+            $("#log_form").html(
+                `{% include "components/login.html"%}`
+            )
+        }
+    }
+
+function signup() {
+    if ($("#b_signup").hasClass("active")){
+        console.log("activated")
+    } else{
+        $("#b_login").removeClass("active")
+        $("#b_signup").addClass("active")
+        $("#log_form").html(
+            `{% include "components/signup.html"%}`
+        )
+    }
+}
+
+
+{% endblock %}

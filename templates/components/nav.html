@@ -38,18 +38,10 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        {% if logined %}
-                        <li>
-                            <a href="{{ base_url }}+ /logout">logout</a>
+                        <li><a href="javascript:void(0)" id="b_logout" onclick="logout()">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                            退出登录</a>
                         </li>
-                        {% else %}
-                        <li>
-                            <a href="{{ base_url }}+ /login">login</a>
-                        </li>
-                        <li>
-                            <a href="{{ base_url }}+ /signup">signup</a>
-                        </li>
-                        {% endif %}
                     </ul>
                 </li>
             </ul>

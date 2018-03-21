@@ -1,0 +1,7 @@
+<header class="container">
+    {% for cat, msg in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert-{{ cat }}">
+        <p>{{ msg }}</p>
+    </div>
+    {% endfor %}
+</header>

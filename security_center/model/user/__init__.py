@@ -10,7 +10,7 @@ from .role_mixin import RoleMixin
 from .real_name_auth_mixin import RealNameAuthMixin
 from .thirdpart_auth_mixin import ThirdPartAuthMixin
 from .login_info_mixin import LoginInfoMixin
-
+from .img_mixin import ImgMixin
 
 class User(
         Core,
@@ -22,5 +22,6 @@ class User(
         RoleMixin,
         RealNameAuthMixin,
         ThirdPartAuthMixin,
-        LoginInfoMixin):
+        LoginInfoMixin,
+        ImgMixin):
     pass

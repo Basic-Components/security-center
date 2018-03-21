@@ -1,2 +1,3 @@
 from .init import views
-from .helloword import *
+from .index import *
+from .profile import *

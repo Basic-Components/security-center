@@ -1,0 +1,33 @@
+{% extends 'base.html' %} 
+{% block content %} 
+<div class="container">
+    <h1>Profile</h1>
+    <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="row">
+                        
+                    </div>
+                    <div class="row">
+                        {% if user.img_url %}
+                        <img src="{user.img_url}" alt="user_profile" class="img-circle">
+                        {% else %}
+                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521623217791&di=c68bd461b182838f3367a7275deba191&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01460b57e4a6fa0000012e7ed75e83.png%401280w_1l_2o_100sh.png" alt="user_profile" class="img-circle">
+                    </div>
+                    <div class="row">
+                        
+                    </div>
+                </div>
+                <div class="col-md-7">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+
+        </div>
+      </div>
+</div>
+{% endblock %}

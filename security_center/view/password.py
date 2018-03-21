@@ -19,7 +19,7 @@ async def index(request):
     return html(content)
 
 
-@views.get("/login", name="login")
+@views.post("/login", name="login")
 async def view_login(request):
     pass
 
@@ -33,7 +33,7 @@ async def view_login(request):
     #     return redirect('/')
 
 
-@views.get("/signup", name="signup")
+@views.post("/signup", name="signup")
 async def view_signup(request):
     try:
         uid = request['session']['uid']

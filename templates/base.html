@@ -1,20 +1,40 @@
 {% extends 'components/skeleton.html' %} 
 {% block head %} 
-{% include 'components/head.html' %} 
+    {% include 'components/head.html' %} 
 {% endblock %} 
 {% block style%}
-<style></style>
+    <style></style>
 {% endblock %} 
 {% block nav %} 
-{% include 'components/nav.html' %} 
+    {% include 'components/nav.html' %} 
 {% endblock %} 
+{% block header %}
+{% include 'components/header.html' %} 
+{% endblock %}
 {% block content %}
-<p>base</p>
+    <p>base</p>
 {% endblock %} 
 {% block footer %} 
-{% include 'components/footer.html' %} 
+    {% include 'components/footer.html' %} 
 {% endblock %} 
 {% block script %}
-<script>
-</script>
+    function logout() {
+        console.log("logout query")
+        $.ajax({
+                url: "{{ base_url }}/api/user/login",
+                type: "delete",
+                contentType: "application/json",
+                dataType: "json",
+                timeout: 60000,
+                success: function (msg) {
+                    console.log("logout done!")
+                    window.location.reload()
+                },
+                error: function(xhr){
+                    console.log(xhr.status)
+                    alert(xhr.responseJSON.message)
+                }
+            }
+        )
+    }
 {% endblock %}
