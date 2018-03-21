@@ -14,8 +14,7 @@ from playhouse.postgres_ext import (
     BinaryJSONField
 )
 from ..base import BaseModel
-
-DATETIME_FMT = '%Y-%m-%d %H:%M:%S.%f'
+from .const import DATETIME_FMT
 
 
 def info_default():
@@ -82,15 +81,10 @@ def access_authority_default():
 
 class Core(BaseModel):
 
-    STATUS_CHOICES = ((0, "未认证"), (1, "已认证"), (2, "已注销"))
-    ROLE_CHOICES = ((0, "超级用户"), (1, "管理员用户"), (2, "普通用户"))
     DATETIME_FMT = DATETIME_FMT
     # 主键的uid
     uid = UUIDField(primary_key=True, default=uuid4)
-    # 账户状态,
-    _status = IntegerField(default=0, choices=STATUS_CHOICES)
-    # 账户权限
-    _role = IntegerField(default=2, choices=STATUS_CHOICES)
+
     # 认证时间
     _auth_time = DateTimeField(formats=DATETIME_FMT, null=True)
     # 注销时间
@@ -105,19 +99,12 @@ class Core(BaseModel):
     # 用户创建当前别名的时间
     _nickname_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
-    # 用户密码
-    _password = CharField(max_length=40)
-    # 用户创建当前密码的时间
-    _password_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
+    
 
     # 用户邮箱
     _email = CharField(unique=True, max_length=40)
     # 用户当前邮箱写入时间
     _email_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
-
-    # 用户头像
-    _img_type = CharField(null=True)
-    _img_base64 = TextField(null=True)
 
     # 用户手机号
     _phone = CharField(null=True)

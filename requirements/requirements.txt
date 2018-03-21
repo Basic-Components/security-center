@@ -10,3 +10,4 @@ sanic_mail
 aioredis
 ua-parser 
 user-agents
+itsdangerous

@@ -1,7 +1,14 @@
 import hmac
+from datetime import datetime
+from peewee import (
+    CharField,
+    DateTimeField
+)
+from ..base import BaseModel
+from .const import DATETIME_FMT
 
 
-class HashPasswordMixin:
+class HashPasswordMixin(BaseModel):
     @classmethod
     def hash_password(cls, org_pwd: str):
         """原始密码计算hash值.
@@ -19,6 +26,11 @@ class HashPasswordMixin:
         org_pwd = org_pwd.encode("utf-8")
         hash_pwd = hmac.new(salt, org_pwd,digestmod="md5")
         return hash_pwd.hexdigest()
+
+    # 用户密码
+    _password = CharField(max_length=40)
+    # 用户创建当前密码的时间
+    _password_time = DateTimeField(formats=DATETIME_FMT, default=datetime.now)
 
     @property
     def cpassword_time(self):

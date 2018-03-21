@@ -23,6 +23,10 @@ class Core(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         database = AioDbFactory(app.config.TEST_DB_URL)
+        app.config.update({
+            'SESSION_TIMEOUT': 10 * 60,
+            'ACTIVATE_TIMEOUT': 5 * 60
+        })
         database.salt = app.config.SECRET
         db.initialize(database)
         app.config.update({

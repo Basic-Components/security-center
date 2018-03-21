@@ -1,7 +1,14 @@
 from datetime import datetime
+from peewee import IntegerField
+from ..base import BaseModel
 
 
-class RoleMixin:
+class RoleMixin(BaseModel):
+
+    ROLE_CHOICES = ((0, "超级用户"), (1, "管理员用户"), (2, "普通用户"))
+    # 账户权限
+    _role = IntegerField(default=2, choices=ROLE_CHOICES)
+
     @property
     def role(self):
         return dict(self.ROLE_CHOICES)[self._role]

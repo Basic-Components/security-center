@@ -72,6 +72,7 @@ def _run_app():
 def _init_db():
     """初始化数据库连接."""
     database = AioDbFactory(app.config.DB_URL)
+    database.salt = app.config.SECRET
     db.initialize(database)
 
 

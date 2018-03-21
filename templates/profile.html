@@ -1,27 +1,27 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% block content %} 
 <div class="container">
-    <h1>Profile</h1>
+    
     <div class="row">
         <div class="col-md-3">
         </div>
         <div class="col-md-6">
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="row">
-                        
+                        <h1>Profile</h1>
                     </div>
                     <div class="row">
                         {% if user.img_url %}
-                        <img src="{user.img_url}" alt="user_profile" class="img-circle">
+                        <div class="thumbnail">
+                        <img src="{user.img_url}" alt="user_profile" class="img-circle center-block img-responsive">
                         {% else %}
-                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521623217791&di=c68bd461b182838f3367a7275deba191&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01460b57e4a6fa0000012e7ed75e83.png%401280w_1l_2o_100sh.png" alt="user_profile" class="img-circle">
-                    </div>
-                    <div class="row">
-                        
+                        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1521623217791&di=c68bd461b182838f3367a7275deba191&imgtype=0&src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01460b57e4a6fa0000012e7ed75e83.png%401280w_1l_2o_100sh.png" alt="user_profile" class="img-circle center-block img-responsive">
+                        {% endif%}
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-8">
                 </div>
             </div>
         </div>

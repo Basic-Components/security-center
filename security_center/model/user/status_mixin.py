@@ -1,7 +1,13 @@
 from datetime import datetime
+from peewee import IntegerField
+from ..base import BaseModel
 
 
-class StatusMixin:
+class StatusMixin(BaseModel):
+    STATUS_CHOICES = ((0, "未认证"), (1, "已认证"), (2, "已注销"))
+    # 账户状态,
+    _status = IntegerField(default=0, choices=STATUS_CHOICES)
+
     @property
     def status(self):
         return dict(self.STATUS_CHOICES)[self._status]

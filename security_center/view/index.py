@@ -23,14 +23,19 @@ async def index(request):
 
 @views.post("/login", name="login")
 async def func_login(request):
-    print(request.form)
+    user = await verify_logined(request)
+    if user:
+        request['flash']('用户已登录', 'info')
+        return redirect('/')
     inputEmail = request.form.get("inputEmail")
     inputPassword = request.form.get("inputPassword")
     user = await User.get(User._email == inputEmail)
     if user is None:
-        raise NotFound("未找到用户", status_code=404)
+        request['flash']('未找到用户', 'warning')
+        return redirect('/')
     if user.check_password(inputPassword) is False:
-        raise Unauthorized("密码错误", 401)
+        request['flash']('密码错误', 'danger')
+        return redirect('/')
     device = "api"
     if request.headers.get('user-agent'):
         user_agent = parse(request.headers['user-agent'])
@@ -48,7 +53,12 @@ async def func_login(request):
         ip=request.ip,
         device=device
     )
-    request['session']['uid'] = str(user.uid)
+    if user.status == "已认证":
+        request['flash']('登录成功', 'success')
+        request['session']['uid'] = str(user.uid)
+    else:
+        request['flash']('登录成功,请激活用户', 'success')
+        request['session']['uid'] = str(user.uid)
     return redirect('/')
 
 
@@ -58,11 +68,21 @@ async def func_signup(request):
     inputNickname = request.form.get("inputNickname")
     inputEmail = request.form.get("inputEmail")
     inputPassword = request.form.get("inputPassword")
+    user = await User.get(User._nickname==inputNickname)
+    if user is not None:
+        request['flash'](f'user {inputNickname} already exist!', 'warning')
+        return redirect('/')
+    user = await User.get(User._email==inputEmail)
+    if user is not None:
+        request['flash'](f'email {inputEmail} already used!', 'warning')
+        return redirect('/')
     if "@" not in inputEmail:
-        raise Unauthorized("email format error", 401)
+        request['flash']('email format error', 'danger')
+        return redirect('/')
     pwd = inputPassword
     if len(pwd) < 6:
-        raise Unauthorized("password must longger than 6", 401)
+        request['flash']('password must longger than 6', 'danger')
+        return redirect('/')
     numeric = False
     lower = False
     upper = False
@@ -74,7 +94,8 @@ async def func_signup(request):
         if i.isupper():
             upper = True
     if not all([numeric, lower, upper]):
-        raise Unauthorized("password must have upper,lower and numeric", 401)
+        request['flash']('password must have upper,lower and numeric', 'danger')
+        return redirect('/')
     try:
         kwargs = {
             "nickname": inputNickname,
@@ -84,7 +105,8 @@ async def func_signup(request):
         u = await User.create_user(**kwargs)
     except Exception as e:
         traceback.print_exc(file=sys.stdout)
-        raise ServerError(str(e), 500)
+        request['flash']('user create error', 'danger')
+        return redirect('/')
     else:
         token = activate_ser.dumps({"uid": str(u.uid)})
         activate_url = request.app.config.BASE_URL + "/user/activate/?token=" + token
@@ -99,4 +121,4 @@ async def func_signup(request):
         )
         request['flash']('have sent activate email to your email address', 'info')
         request['session']['uid'] = str(u.uid)
-        return redirect('/')
+    return redirect('/')
